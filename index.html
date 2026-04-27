@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Онлайн администратора</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <div>
+        <h1 id="page-title">Онлайн администратора</h1>
+        <p class="subtext" id="page-subtext">ViceCity · Период: 7 дней</p>
+      </div>
+      <button class="export-btn" id="export-btn" type="button">Экспорт в JSON</button>
+    </header>
+
+    <section class="dashboard">
+      <article class="card table-card">
+        <h2>Статистика по дням</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>День</th>
+                <th>Онлайн</th>
+                <th>Репорты</th>
+              </tr>
+            </thead>
+            <tbody id="stats-body"></tbody>
+          </table>
+        </div>
+      </article>
+
+      <aside class="card summary-card">
+        <h2>Сводка</h2>
+        <div class="summary-item">
+          <span>Онлайн</span>
+          <strong><span id="sum-online">0 ч. 00 м.</span> <em id="sum-online-avg">(~0 ч./дн.)</em></strong>
+        </div>
+        <div class="summary-item">
+          <span>Репорты</span>
+          <strong><span id="sum-reports">0 отв.</span> <em id="sum-reports-avg">(~0 отв./дн.)</em></strong>
+        </div>
+        <div class="divider"></div>
+        <div class="legend">
+          <span class="dot"></span>
+          <p id="summary-note">Открой страницу через кнопку "Подробнее" из бота, чтобы увидеть персональную статистику.</p>
+        </div>
+      </aside>
+    </section>
+  </main>
+  <script>
+    function decodePayload() {
+      const params = new URLSearchParams(window.location.search);
+      const encoded = params.get("d");
+      if (!encoded) return null;
+      try {
+        const normalized = encoded.replace(/-/g, "+").replace(/_/g, "/");
+        const pad = normalized.length % 4 === 0 ? "" : "=".repeat(4 - (normalized.length % 4));
+        const utf8 = decodeURIComponent(escape(atob(normalized + pad)));
+        return JSON.parse(utf8);
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function secToHhMm(sec) {
+      const h = Math.floor(sec / 3600);
+      const m = Math.floor((sec % 3600) / 60);
+      if (h === 0 && m === 0) return "Не заходил(а)";
+      if (h === 0) return m + " м.";
+      return h + " ч. " + m + " м.";
+    }
+
+    function renderTable(days) {
+      const body = document.getElementById("stats-body");
+      body.innerHTML = "";
+      days.forEach((day) => {
+        const tr = document.createElement("tr");
+        const dayCell = document.createElement("td");
+        dayCell.textContent = day.date + " (" + String(day.weekday || "").toLowerCase() + ")";
+
+        const onlineCell = document.createElement("td");
+        onlineCell.className = "red";
+        onlineCell.textContent = secToHhMm(Number(day.seconds || 0));
+
+        const repCell = document.createElement("td");
+        repCell.className = "red";
+        const rep = Number(day.reports || 0);
+        repCell.textContent = rep > 0 ? rep + " отв." : "Нет ответов";
+
+        tr.append(dayCell, onlineCell, repCell);
+        body.appendChild(tr);
+      });
+    }
+
+    function renderStats(data) {
+      const nick = data.nickname || "Unknown";
+      const period = Number(data.period_days || 7);
+      const totalSeconds = Number(data.total_seconds || 0);
+      const totalReports = Number(data.total_reports || 0);
+      const avgHours = Number(data.avg_hours_per_day || 0);
+      const avgReports = Number(data.avg_reports_per_day || 0);
+      const days = Array.isArray(data.days) ? data.days : [];
+      const server = data.server || "Drake";
+
+      document.getElementById("page-title").textContent = "Онлайн " + nick;
+      document.getElementById("page-subtext").textContent = server + " · Период: " + period + " дней";
+      document.getElementById("sum-online").textContent = secToHhMm(totalSeconds);
+      document.getElementById("sum-online-avg").textContent = "(~" + avgHours + " ч./дн.)";
+      document.getElementById("sum-reports").textContent = totalReports + " отв.";
+      document.getElementById("sum-reports-avg").textContent = "(~" + avgReports + " отв./дн.)";
+      document.getElementById("summary-note").textContent = "Персональная статистика загружена из ссылки бота.";
+      renderTable(days);
+
+      const exportBtn = document.getElementById("export-btn");
+      exportBtn.onclick = function () {
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "myonline-" + nick + ".json";
+        a.click();
+        URL.revokeObjectURL(a.href);
+      };
+    }
+
+    function renderFallback() {
+      renderTable([]);
+      const body = document.getElementById("stats-body");
+      body.innerHTML = "<tr><td colspan='3' class='red'>Нет данных. Открой страницу через кнопку \"Подробнее\" в боте.</td></tr>";
+    }
+
+    const payload = decodePayload();
+    if (payload) {
+      renderStats(payload);
+    } else {
+      renderFallback();
+    }
+  </script>
+</body>
+</html>

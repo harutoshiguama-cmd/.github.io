@@ -1,0 +1,150 @@
+:root {
+  --bg: #070c17;
+  --panel: #0f1626;
+  --panel-2: #101a2d;
+  --border: #202a3d;
+  --text: #d8e1ee;
+  --muted: #8f9bb0;
+  --danger: #e05151;
+  --primary: #4c74ff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, sans-serif;
+  color: var(--text);
+  background: radial-gradient(circle at top, #121a2d 0%, var(--bg) 35%);
+  min-height: 100vh;
+}
+
+.page {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.subtext {
+  margin: 6px 0 0;
+  color: var(--muted);
+}
+
+.export-btn {
+  border: 0;
+  border-radius: 8px;
+  background: var(--primary);
+  color: #fff;
+  padding: 10px 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.dashboard {
+  display: grid;
+  grid-template-columns: 2.8fr 1fr;
+  gap: 18px;
+}
+
+.card {
+  background: linear-gradient(180deg, var(--panel) 0%, var(--panel-2) 100%);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px;
+}
+
+h2 {
+  margin: 0 0 12px;
+  font-size: 20px;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 13px 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+th {
+  color: #c3cfdf;
+  font-weight: 600;
+}
+
+.red {
+  color: var(--danger);
+}
+
+.summary-item {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.summary-item span {
+  color: var(--muted);
+}
+
+.summary-item em {
+  color: var(--danger);
+  font-style: normal;
+  font-size: 14px;
+}
+
+.divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.09);
+  margin: 12px 0 16px;
+}
+
+.legend {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  margin-top: 6px;
+  border-radius: 50%;
+  background: #6f8dff;
+}
+
+.legend p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+@media (max-width: 940px) {
+  .dashboard {
+    grid-template-columns: 1fr;
+  }
+}
