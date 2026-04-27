@@ -107,7 +107,7 @@
       const avgHours = Number(data.avg_hours_per_day || 0);
       const avgReports = Number(data.avg_reports_per_day || 0);
       const days = Array.isArray(data.days) ? data.days : [];
-      const server = data.server || "Drake";
+      const server = data.server || "ViceCity";
 
       document.getElementById("page-title").textContent = "Онлайн " + nick;
       document.getElementById("page-subtext").textContent = server + " · Период: " + period + " дней";
