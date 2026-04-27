@@ -49,7 +49,7 @@
         <div class="divider"></div>
         <div class="legend">
           <span class="dot"></span>
-          <p id="summary-note">Открой страницу через кнопку "Подробнее" из бота, чтобы увидеть персональную статистику.</p>
+          <p id="summary-note"></p>
         </div>
       </aside>
     </section>
@@ -115,7 +115,7 @@
       document.getElementById("sum-online-avg").textContent = "(~" + avgHours + " ч./дн.)";
       document.getElementById("sum-reports").textContent = totalReports + " отв.";
       document.getElementById("sum-reports-avg").textContent = "(~" + avgReports + " отв./дн.)";
-      document.getElementById("summary-note").textContent = "Персональная статистика загружена из ссылки бота.";
+      document.getElementById("summary-note").textContent = "";
       renderTable(days);
 
       const exportBtn = document.getElementById("export-btn");
